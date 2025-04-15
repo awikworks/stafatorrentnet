@@ -20,7 +20,7 @@ let glitchTime = 0;
 let glitchDuration = 1000;
 
 let bgImage;
-let kodamImage;  // Gambar PNG dengan nama 'kodam.png'
+let kodamImage;  
 
 let flashTimer = 0;
 let flashDuration = 200;
