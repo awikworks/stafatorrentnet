@@ -20,24 +20,26 @@
 
       body {
         margin: 0;
-        padding: 10px 10px 0 10px; /* top, right, bottom, left */
+        padding: 10px;
         background-color: black;
         color: rgb(0, 255, 0);
         font-family: 'Press Start 2P', monospace;
         display: flex;
         justify-content: center;
+        align-items: flex-start;
+        height: 100vh;
       }
 
       .container {
         border: 2px dashed rgb(0, 255, 0);
         padding: 20px;
-        width: 100%;
-        max-width: calc(100vw - 20px); /* 10px margin kiri-kanan */
+        width: 1280px;
+        height: 720px;
         text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
+        overflow-y: auto;
       }
 
       .logo {
@@ -56,13 +58,23 @@
         margin: 5px 0 10px 0;
         font-size: 12px;
         line-height: 1.1;
+        max-width: 600px;
+      }
+
+      .inner-box {
+        border: 0.1px solid rgb(0, 255, 0);
+        padding: 10px;
+        margin: 0 0;
+        max-width: 1280px;
+		max-height: 720px;
+        width: 100%;
+        text-align: center;
       }
 
       canvas {
         display: block;
-        margin: 20px 0 0 0;
-        max-width: 100%;
-        height: auto;
+        margin: 0 auto;
+        border: none;
       }
     </style>
   </head>
@@ -71,27 +83,22 @@
       <img src="STN.png" alt="STN Logo" class="logo" />
       <h1>Welcome to Stafatorrentnet</h1>
       <h3>Digitalis Immortalus Doom Systemis Warnet</h3>
-      <p>————————————————————</p>
-      <h3>The Stafatorrentnet cell No.13, a cursed prompter is condemned to vomit sound from his shattered mind. Cables pierce his skull, extracting inner screams and whispers of sin to be processed by the Stafatorrentnet Dark System, an unseen entity that grinds agony into tormenting frequencies. These sounds spread, ensnaring other souls in meaningless noise. He cannot be silent. He cannot die. The cell is a machine of suffering, and he is its fuel.</h3>
 
-      <!-- Canvas ditempatkan di bawah teks, lebar mengikuti kontainer -->
-      <canvas id="sketchCanvas"></canvas>
+      <div class="inner-box">
+        <!-- p5.js canvas akan otomatis ditempatkan di sini -->
+      </div>
+
+      <h3>The Stafatorrentnet cell No.13, a cursed prompter is condemned to vomit sound from his shattered mind. Cables pierce his skull, extracting inner screams and whispers of sin to be processed by the Stafatorrentnet Dark System, an unseen entity that grinds agony into tormenting frequencies. These sounds spread, ensnaring other souls in meaningless noise. He cannot be silent. He cannot die. The cell is a machine of suffering, and he is its fuel.</h3>
     </div>
 
     <script>
-      let canvasRatio = 16 / 9; // Rasio canvas (16:9)
-
-      function setup() {
-        let canvasWidth = windowWidth - 40; // Margin 10px kiri-kanan
-        let canvasHeight = canvasWidth / canvasRatio; // Sesuaikan tinggi berdasarkan lebar dan rasio
-        createCanvas(canvasWidth, canvasHeight).parent('sketchCanvas');
-      }
-
-      function windowResized() {
-        let canvasWidth = windowWidth - 40; // Margin 10px kiri-kanan
-        let canvasHeight = canvasWidth / canvasRatio; // Sesuaikan tinggi berdasarkan lebar dan rasio
-        resizeCanvas(canvasWidth, canvasHeight);
-      }
+      // Tempatkan canvas ke dalam .inner-box setelah dibuat
+      const originalCreateCanvas = createCanvas;
+      createCanvas = function(w, h) {
+        const canvas = originalCreateCanvas(w, h);
+        canvas.parent(document.querySelector('.inner-box'));
+        return canvas;
+      };
     </script>
   </body>
 </html>
