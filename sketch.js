@@ -83,7 +83,8 @@ function shuffleSamples() {
 }
 
 function setup() {
-  createCanvas(1280, 720);
+  // Atur ukuran canvas secara otomatis berdasarkan ukuran layar perangkat
+  createCanvas(windowWidth, windowHeight);
   userStartAudio();
 
   let types = ['white', 'pink', 'brown', 'blue', 'violet', 'grey'];
