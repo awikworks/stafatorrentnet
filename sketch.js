@@ -68,10 +68,7 @@ function shuffleSamples() {
 }
 
 function setup() {
-  // Menyesuaikan ukuran canvas berdasarkan lebar layar dengan rasio 16:9
-  let canvasWidth = windowWidth;
-  let canvasHeight = Math.floor(windowWidth * 9 / 16);
-  createCanvas(canvasWidth, canvasHeight);
+  createCanvas(1280, 720);
   userStartAudio();
 
   let types = ['white', 'pink', 'brown', 'blue', 'violet', 'grey'];
@@ -183,6 +180,7 @@ function draw() {
 
     let headerY = 50;
     text("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
+    
 
     textSize(16);
     let lineSpacing = 20;
