@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Stafatorrentnet-Azab Prompter</title>
 
-    <!-- Font PressStart2P from Google Fonts -->
+    <!-- Font PressStart2P -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet" />
 
     <!-- p5.js -->
@@ -14,86 +14,61 @@
     <script src="sketch.js"></script>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         margin: 0;
+        padding: 10px 10px 0 10px; /* top, right, bottom, left */
         background-color: black;
         color: rgb(0, 255, 0);
         font-family: 'Press Start 2P', monospace;
+        display: flex;
+        justify-content: center;
+      }
+
+      .container {
+        border: 2px dashed rgb(0, 255, 0);
+        padding: 20px;
+        width: 100%;
+        max-width: calc(100vw - 20px); /* 10px margin kiri-kanan */
         text-align: center;
       }
 
-      #content {
-        padding: 2em;
-      }
-
-      img.logo {
+      .logo {
         max-width: 500px;
-        width: 100%;
         height: auto;
-        margin: 0 auto 1em;
-        display: block;
+        margin-bottom: 10px;
       }
 
       h1 {
-        margin: 0;
-        font-size: 1.5em;
-        line-height: 1.2em;
+        margin: 10px 0 5px 0;
+        font-size: 16px;
+        line-height: 1.2;
       }
 
       h3 {
-        margin: 0.2em 0 1.5em;
-        font-size: 1em;
-        line-height: 1.2em;
-      }
-
-      p {
-        max-width: 800px;
-        margin: 2em auto;
-        font-size: 0.8em;
-		line-height: 1.5em;
-      }
-
-      s {
-        position: relative;
-        color: inherit;
-        text-decoration: none;
-      }
-
-      s::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 50%;
-        height: 4px;
-        background-color: rgb(0, 255, 0);
-        transform: translateY(-50%);
+        margin: 5px 0 10px 0;
+        font-size: 12px;
+        line-height: 1.1;
       }
 
       canvas {
         display: block;
-        margin: 1.5em auto;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
       }
     </style>
   </head>
   <body>
-    <div id="content">
-      <!-- Gambar STN -->
+    <div class="container">
       <img src="STN.png" alt="STN Logo" class="logo" />
-
-      <!-- Headline dan Subheadline -->
       <h1>Welcome to Stafatorrentnet</h1>
       <h3>Digitalis Immortalus Doom Systemis Warnet</h3>
-
-      <!-- Canvas dari sketch.js akan muncul otomatis -->
-
-      <!-- Paragraf -->
-      <p><em>“You know, my mother was an atheist. She used to say that there was good news and bad news about <s>hell</s> doom warnet. The good news is <s>hell</s> doom warnet is just the product of a morbid human imagination. The bad news is whatever humans can imagine, they can usually create.” —— Artis Mullet</em></p>
-	  
-	  <p>————————————————————</p>
-	  <p>Stafatorrentnet is a cursed <em>warnet</em> located in a shadowed digital dimension, where lost entities are condemned to an endless cycle of suffering. Those who stumble into its haunted bandwidth are dragged into a vortex of corrupted code and deadly loops, where torment manifests as slicing latency, reality-tearing glitches, and infernal firewalls that burn away all traces of existence.</p>
-	  <p>At the heart of this realm resides the Cursed Algorithm, a merciless mechanical will that rewrites the fate of every digital soul with lines of suffering-infused instruction. It spins endlessly, twisting logic, distorting structure, and embedding terror into every sequence. In Stafatorrentnet, there is no escap, only the echo of agony from a system that endlessly repeats ruin.</p>
-	  <p>————————————————————</p>
+	   <p>————————————————————</p>
+  		<h3>The Stafatorrentnet cell No.13, a cursed prompter is condemned to vomit sound from his shattered mind. Cables pierce his skull, extracting inner screams and whispers of sin to be processed by the Stafatorrentnet Dark System, an unseen entity that grinds agony into tormenting frequencies. These sounds spread, ensnaring other souls in meaningless noise. He cannot be silent. He cannot die. The cell is a machine of suffering, and he is its fuel.</h3>
     </div>
-  </body>
+  </body> 
 </html>

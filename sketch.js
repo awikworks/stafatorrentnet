@@ -20,7 +20,7 @@ let glitchTime = 0;
 let glitchDuration = 1000;
 
 let bgImage;
-let kodamImage;  // Gambar PNG dengan nama 'kodam.png'
+let kodammImage;  // Gambar PNG dengan nama 'kodam.png'
 
 let flashTimer = 0;
 let flashDuration = 200;
@@ -46,8 +46,8 @@ function safeRun(fn, label = 'safeRun') {
 }
 
 function preload() {
-  bgImage = loadImage('SFN.jpg');
-  kodamImage = loadImage('kodam.png');  // Memuat gambar PNG
+  bgImage = loadImage('SFNN.jpg');
+  kodamImage = loadImage('kodamm.png');  // Memuat gambar PNG
 
   samples.push(loadSound('azizi.mp3'));
   samples.push(loadSound('skibidi.mp3'));
@@ -68,7 +68,10 @@ function shuffleSamples() {
 }
 
 function setup() {
-  createCanvas(1280, 720);
+  // Menyesuaikan ukuran canvas berdasarkan lebar layar dengan rasio 16:9
+  let canvasWidth = windowWidth;
+  let canvasHeight = Math.floor(windowWidth * 9 / 16);
+  createCanvas(canvasWidth, canvasHeight);
   userStartAudio();
 
   let types = ['white', 'pink', 'brown', 'blue', 'violet', 'grey'];
@@ -180,7 +183,6 @@ function draw() {
 
     let headerY = 50;
     text("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
-    
 
     textSize(16);
     let lineSpacing = 20;
