@@ -85,10 +85,10 @@
       <h1>Welcome to Stafatorrentnet</h1>
       <h3>Digitalis Immortalus Doom Systemis Warnet</h3>
 
-      <!-- Canvas Placeholder (p5.js akan menggambar di sini) -->
+      <!-- Placeholder untuk canvas sketch.js -->
       <div id="sketch-holder"></div>
 
-      <!-- Paragraf Kutipan -->
+      <!-- Paragraf -->
       <p><em>“You know, my mother was an atheist. She used to say that there was good news and bad news about <s>hell</s> doom warnet. The good news is <s>hell</s> doom warnet is just the product of a morbid human imagination. The bad news is whatever humans can imagine, they can usually create.” —— Artis Mullet</em></p>
       
       <p>————————————————————</p>
@@ -97,7 +97,7 @@
       <p>————————————————————</p>
     </div>
 
-    <!-- Tambahkan ini agar p5.js menggambar canvas dalam #sketch-holder -->
+    <!-- JS untuk memastikan sketch.js me-render di div yang benar -->
     <script>
       let sketch = (p) => {
         p.setup = () => {
@@ -107,11 +107,11 @@
           p.fill(0, 255, 0);
           p.textAlign(p.CENTER, p.CENTER);
           p.textSize(16);
-          p.text("Sketch.js is alive", p.width / 2, p.height / 2);
+          p.text("Sketch.js is running...", p.width / 2, p.height / 2);
         };
 
         p.draw = () => {
-          // Tambahkan efek lainnya di sini jika dibutuhkan
+          // tambahkan konten dinamis jika diinginkan
         };
       };
 

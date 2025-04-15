@@ -37,12 +37,27 @@ let blinkInterval = 500; // Interval kedipan dalam milidetik
 let lastRestartTime = 0;
 let restartInterval = 180000; // 3 menit dalam milidetik
 
+// Variabel untuk mengawasi peristiwa error
+let lastErrorTime = 0;
+let errorTimeout = 200000; // Timeout error dalam milidetik
+
 function safeRun(fn, label = 'safeRun') {
   try {
     fn();
   } catch (e) {
     console.error(`[${label}]`, e);
+    lastErrorTime = millis();
+    handleError(e);  // Tangani kesalahan dengan pemulihan otomatis
   }
+}
+
+function handleError(error) {
+  // Tangani kesalahan dan lakukan restart setelah timeout
+  console.error("Error caught: ", error);
+  setTimeout(() => {
+    console.log("Error handling: Reloading...");
+    location.reload();
+  }, errorTimeout);
 }
 
 function preload() {
@@ -99,7 +114,7 @@ function setup() {
     console.log("Time since last heartbeat:", timeSinceLastBeat); // Debugging
     if (timeSinceLastBeat > watchdogInterval) {
       console.warn("Watchdog triggered: Reloading...");
-      location.reload();
+      location.reload();  // Restart jika tidak ada heartbeat dalam waktu tertentu
     }
   }, 5000);
 
@@ -180,7 +195,6 @@ function draw() {
 
     let headerY = 50;
     text("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
-    
 
     textSize(16);
     let lineSpacing = 20;
