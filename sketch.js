@@ -20,7 +20,7 @@ let glitchTime = 0;
 let glitchDuration = 1000;
 
 let bgImage;
-let kodamImage;  
+let kodamImage;  // Gambar PNG dengan nama 'kodam.png'
 
 let flashTimer = 0;
 let flashDuration = 200;
@@ -83,8 +83,7 @@ function shuffleSamples() {
 }
 
 function setup() {
-  // Atur ukuran canvas secara otomatis berdasarkan ukuran layar perangkat
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(1280, 720);
   userStartAudio();
 
   let types = ['white', 'pink', 'brown', 'blue', 'violet', 'grey'];
