@@ -1,78 +1,38 @@
-let noises = [];
-let currentNoise = null;
-let noiseTimer = 0;
-let noiseDuration = 0;
+// === GLOBAL STATE ===
+let noises = [], currentNoise = null;
+let noiseTimer = 0, noiseDuration = 0;
 
 let effects = ['filter', 'distortion', 'reverb', 'delay'];
-let currentEffect = null;
-let lastFXUpdate = 0;
-let fxUpdateInterval = 0;
+let currentEffect = null, lastFXUpdate = 0, fxUpdateInterval = 0;
 
 let filter, distortion, reverb, delay;
 
-let samples = [];
-let sampleQueue = [];
-let currentSample = null;
-let lastSampleTime = 0;
-let sampleChangeInterval = 0;
+let samples = [], sampleQueue = [];
+let currentSample = null, lastSampleTime = 0, sampleChangeInterval = 0;
 
-let glitchTime = 0;
-let glitchDuration = 1000;
+let glitchTime = 0, glitchDuration = 1000;
+let flashTimer = 0, flashDuration = 200;
+let lastHeartbeat = 0, watchdogInterval = 10000;
+let lastRestartTime = 0, restartInterval = 180000;
 
-let bgImage;
-let kodammImage;  // Gambar PNG dengan nama 'kodam.png'
+let bgImage, kodamImage;
+let customFont, blinkState = true, blinkInterval = 500;
 
-let flashTimer = 0;
-let flashDuration = 200;
-
-let lastHeartbeat = 0;
-let watchdogInterval = 10000; // 10 detik toleransi sebelum reload
-
-// Variabel untuk font
-let customFont;
-let blinkState = true;  // Untuk mengatur kedipan teks
-let blinkInterval = 500; // Interval kedipan dalam milidetik
-
-// Variabel untuk restart otomatis
-let lastRestartTime = 0;
-let restartInterval = 180000; // 3 menit dalam milidetik
-
-function safeRun(fn, label = 'safeRun') {
-  try {
-    fn();
-  } catch (e) {
-    console.error(`[${label}]`, e);
-  }
-}
-
+// === SETUP ===
 function preload() {
   bgImage = loadImage('SFNN.jpg');
-  kodamImage = loadImage('kodamm.png');  // Memuat gambar PNG
-
-  samples.push(loadSound('azizi.mp3'));
-  samples.push(loadSound('skibidi.mp3'));
-  samples.push(loadSound('mistika.mp3'));
-  samples.push(loadSound('Biang.mp3'));
-  samples.push(loadSound('Amatir.mp3'));
-  samples.push(loadSound('warkop.mp3'));
-  samples.push(loadSound('hart.mp3'));
-  samples.push(loadSound('bunuh.mp3'));
-  samples.push(loadSound('emosi.mp3'));
-
-  // Memuat font
+  kodamImage = loadImage('kodamm.png');
   customFont = loadFont('PressStart2P-Regular.ttf');
-}
 
-function shuffleSamples() {
-  sampleQueue = shuffle([...samples]);
+  const files = ['azizi', 'skibidi', 'mistika', 'Biang', 'Amatir', 'warkop', 'hart', 'bunuh', 'emosi'];
+  files.forEach(f => samples.push(loadSound(f + '.mp3')));
 }
 
 function setup() {
-  createCanvas(1280, 720);
+  setupResponsiveCanvas();
   userStartAudio();
 
-  let types = ['white', 'pink', 'brown', 'blue', 'violet', 'grey'];
-  types.forEach(type => {
+  ['white', 'pink', 'brown', 'blue', 'violet', 'grey'].forEach(type => {
     let n = new p5.Noise(type);
     n.start();
     n.amp(0);
@@ -82,7 +42,7 @@ function setup() {
   filter = new p5.LowPass();
   distortion = new p5.Distortion();
   reverb = new p5.Reverb();
-  delay = new p5.Distortion();  // Menggunakan distortion untuk efek delay
+  delay = new p5.Distortion();
 
   glitchTime = millis();
   lastFXUpdate = millis();
@@ -90,124 +50,43 @@ function setup() {
   lastSampleTime = millis();
   sampleChangeInterval = random(10000, 20000);
   noiseDuration = random(4000, 8000);
-
   shuffleSamples();
 
-  // Setup watchdog checker
-  setInterval(() => {
-    let timeSinceLastBeat = millis() - lastHeartbeat;
-    console.log("Time since last heartbeat:", timeSinceLastBeat); // Debugging
-    if (timeSinceLastBeat > watchdogInterval) {
-      console.warn("Watchdog triggered: Reloading...");
-      location.reload();
-    }
-  }, 5000);
-
-  // Setup timer untuk restart otomatis setelah 3 menit
-  setInterval(() => {
-    let timeSinceLastRestart = millis() - lastRestartTime;
-    if (timeSinceLastRestart > restartInterval) {
-      console.warn("Restarting program after 3 minutes...");
-      restartProgram();
-    }
-  }, 5000);
+  setInterval(checkWatchdog, 5000);
+  setInterval(checkRestart, 5000);
 }
 
-function restartProgram() {
-  // Reset semua variabel penting dan status
-  noises.forEach(noise => noise.stop());
-  samples.forEach(sample => sample.stop());
-
-  glitchTime = millis();
-  lastFXUpdate = millis();
-  fxUpdateInterval = random(6000, 10000);
-  lastSampleTime = millis();
-  sampleChangeInterval = random(10000, 20000);
-  noiseDuration = random(4000, 8000);
-
-  shuffleSamples();
-  
-  // Me-reload halaman (hard restart)
-  location.reload();  // Reload untuk memastikan aplikasi segar
+function setupResponsiveCanvas() {
+  let aspectRatio = 16 / 9;
+  let w = windowWidth;
+  let h = windowWidth / aspectRatio;
+  if (h > windowHeight) {
+    h = windowHeight;
+    w = h * aspectRatio;
+  }
+  const canvas = createCanvas(w, h);
+  canvas.parent('canvas-container'); // Menempatkan canvas di dalam div dengan id canvas-container
 }
 
+function windowResized() {
+  setupResponsiveCanvas();
+}
+
+// === DRAW LOOP ===
 function draw() {
   safeRun(() => {
     image(bgImage, 0, 0, width, height);
 
-    if (millis() - glitchTime > glitchDuration) {
-      glitchTime = millis();
-      playRandomNoise();
-    }
+    handleTimers();
+    handleVisuals();
+    displayDebugText();
 
-    if (millis() - lastFXUpdate > fxUpdateInterval) {
-      safeRun(updateEffect, 'updateEffect');
-      lastFXUpdate = millis();
-      fxUpdateInterval = random(6000, 10000);
-    }
-
-    if (millis() - lastSampleTime > sampleChangeInterval) {
-      safeRun(triggerRandomSample, 'triggerRandomSample');
-      lastSampleTime = millis();
-      sampleChangeInterval = random(10000, 20000);
-    }
-
-    if (currentNoise && millis() - noiseTimer > noiseDuration) {
-      currentNoise.amp(0);
-      currentNoise = null;
-      noiseDuration = random(4000, 8000);
-    }
-
-    // Efek glitch pada PNG tanpa pergeseran posisi
-    let isGlitching = millis() % 2000 < 500;  // Interval glitch
-    if (isGlitching) {
-      // Menambahkan sedikit efek glitch pada gambar (misalnya efek warna acak)
-      tint(random(100, 255), random(100, 255), random(100, 255));  // Efek glitch warna
-    } else {
-      noTint();  // Kembali ke normal
-    }
-
-    // Menampilkan PNG di atas canvas dengan efek glitch
-    image(kodamImage, width / 2 - kodamImage.width / 2, height / 2 - kodamImage.height / 2);
-
-    let isFlashing = millis() - flashTimer < flashDuration;
-    let debugAlpha = isFlashing ? 0 : 255;
-
-    fill(0, 255, 0, debugAlpha);
-    textFont(customFont);  // Set font ke "PressStart2P"
-    textSize(16);
-    textAlign(CENTER);
-
-    let headerY = 50;
-    text("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
-    
-
-    textSize(16);
-    let lineSpacing = 20;
-    text("fx " + currentEffect + ", ~" + (currentNoise ? currentNoise.getType() : 'none') + "~noise " + nf((millis() - noiseTimer) / 1000, 1, 2) + "hz", width / 2, headerY + lineSpacing);
-    text("fx~int " + nf(fxUpdateInterval / 1000, 1, 2) + "s, smpl~int " + nf(sampleChangeInterval / 1000, 1, 2) + "s", width / 2, headerY + lineSpacing * 2);
-
-    // Mengatur kedipan teks
-    if (millis() % blinkInterval < blinkInterval / 2) {
-      blinkState = true;
-    } else {
-      blinkState = false;
-    }
-
-    if (blinkState) {
-      fill(0, 255, 0);
-      textSize(35);
-      text("AZAB PROMPTER", width / 2, height - 20);
-    }
   }, 'draw');
 
-  heartbeat(); // <- penting! panggil di akhir draw
+  heartbeat();
 }
 
-function heartbeat() {
-  lastHeartbeat = millis();
-}
-
+// === AUDIO + EFFECT LOGIC ===
 function playRandomNoise() {
   if (currentNoise) currentNoise.amp(0);
   currentNoise = random(noises);
@@ -219,10 +98,10 @@ function playRandomNoise() {
 
 function updateEffect() {
   currentEffect = random(effects);
-
   noises.concat(samples).forEach(source => {
     if (!source) return;
     source.disconnect();
+
     switch (currentEffect) {
       case 'filter':
         source.connect(filter);
@@ -243,18 +122,12 @@ function updateEffect() {
         break;
     }
   });
-
   flashTimer = millis();
 }
 
 function triggerRandomSample() {
-  if (currentSample?.isPlaying()) {
-    currentSample.stop();
-  }
-
-  if (sampleQueue.length === 0) {
-    shuffleSamples();
-  }
+  if (currentSample?.isPlaying()) currentSample.stop();
+  if (sampleQueue.length === 0) shuffleSamples();
 
   currentSample = sampleQueue.pop();
   if (!currentSample?.isLoaded()) return;
@@ -264,17 +137,126 @@ function triggerRandomSample() {
   currentSample.pan(random(-0.4, 0.4));
   currentSample.play();
 
-  let sampleDuration = random(5000, 200000);
   setTimeout(() => {
-    if (currentSample?.isPlaying()) {
-      currentSample.stop();
-    }
-  }, sampleDuration);
+    if (currentSample?.isPlaying()) currentSample.stop();
+  }, random(5000, 200000));
 
   flashTimer = millis();
 }
 
-// Global error catcher (sync)
+function shuffleSamples() {
+  sampleQueue = shuffle([...samples]);
+}
+
+// === WATCHDOG / RESTART ===
+function checkWatchdog() {
+  if (millis() - lastHeartbeat > watchdogInterval) {
+    console.warn("Watchdog triggered: Reloading...");
+    location.reload();
+  }
+}
+
+function checkRestart() {
+  if (millis() - lastRestartTime > restartInterval) {
+    console.warn("Restarting program after interval...");
+    restartProgram();
+  }
+}
+
+function restartProgram() {
+  noises.forEach(n => n.stop());
+  samples.forEach(s => s.stop());
+
+  glitchTime = millis();
+  lastFXUpdate = millis();
+  fxUpdateInterval = random(6000, 10000);
+  lastSampleTime = millis();
+  sampleChangeInterval = random(10000, 20000);
+  noiseDuration = random(4000, 8000);
+  shuffleSamples();
+  location.reload();
+}
+
+// === VISUALS ===
+function handleVisuals() {
+  if (millis() % 2000 < 500) {
+    tint(random(100, 255), random(100, 255), random(100, 255));
+  } else {
+    noTint();
+  }
+
+  let imgRatio = kodamImage.width / kodamImage.height;
+  let imgHeight = height * 0.6;
+  let imgWidth = imgHeight * imgRatio;
+
+  image(kodamImage, 0, 0, width, height);
+
+  if (millis() % blinkInterval < blinkInterval / 2) {
+    drawOutlinedText("AZAB PROMPTER", width / 2, height - 20);
+  }
+}
+
+function drawOutlinedText(txt, x, y) {
+  const fontSize = height / 32;
+  const lineSpacing = height * 0.01;
+  textFont(customFont);
+  textSize(fontSize);
+  textAlign(CENTER);
+
+  stroke(0);
+  strokeWeight(height * 0.01);
+  fill(255, 255, 255);
+  text(txt, x, y);
+
+  noStroke();
+}
+
+function displayDebugText() {
+  let headerY = height * 0.08;
+  drawOutlinedText("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
+  drawOutlinedText(`fx ${currentEffect}, ~${currentNoise?.getType() || 'none'}~noise ${nf((millis() - noiseTimer) / 1000, 1, 2)}hz`, width / 2, headerY + 20);
+  drawOutlinedText(`fx~int ${nf(fxUpdateInterval / 1000, 1, 2)}s, smpl~int ${nf(sampleChangeInterval / 1000, 1, 2)}s`, width / 2, headerY + 40);
+}
+
+// === UTILITY ===
+function heartbeat() {
+  lastHeartbeat = millis();
+}
+
+function handleTimers() {
+  if (millis() - glitchTime > glitchDuration) {
+    glitchTime = millis();
+    playRandomNoise();
+  }
+
+  if (millis() - lastFXUpdate > fxUpdateInterval) {
+    safeRun(updateEffect, 'updateEffect');
+    lastFXUpdate = millis();
+    fxUpdateInterval = random(6000, 10000);
+  }
+
+  if (millis() - lastSampleTime > sampleChangeInterval) {
+    safeRun(triggerRandomSample, 'triggerRandomSample');
+    lastSampleTime = millis();
+    sampleChangeInterval = random(10000, 20000);
+  }
+
+  if (currentNoise && millis() - noiseTimer > noiseDuration) {
+    currentNoise.amp(0);
+    currentNoise = null;
+    noiseDuration = random(4000, 8000);
+  }
+}
+
+function safeRun(fn, label = 'safeRun') {
+  try {
+    fn();
+  } catch (e) {
+    console.error(`[${label}]`, e);
+  }
+}
+
+// === GLOBAL ERROR HANDLING ===
 window.onerror = function (msg, url, lineNo, columnNo, error) {
   console.error("Caught error:", msg, "at", lineNo, ":", columnNo);
   setTimeout(() => {
@@ -284,7 +266,6 @@ window.onerror = function (msg, url, lineNo, columnNo, error) {
   return false;
 };
 
-// Global error catcher (async/unhandled promises)
 window.addEventListener('unhandledrejection', function (event) {
   console.error("Unhandled rejection:", event.reason);
   setTimeout(() => {
