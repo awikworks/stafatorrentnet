@@ -205,7 +205,7 @@ function drawOutlinedText(txt, x, y) {
 
   stroke(0);
   strokeWeight(height * 0.01);
-  fill(255, 255, 255);
+  fill(0, 255, 0);
   text(txt, x, y);
 
   noStroke();
