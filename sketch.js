@@ -192,7 +192,7 @@ function handleVisuals() {
   image(kodamImage, 0, 0, width, height);
 
   if (millis() % blinkInterval < blinkInterval / 2) {
-    drawOutlinedText("A Z A B _ P R O M P T E R", width / 2, height - 20);
+    drawOutlinedText("A Z A B _ P R O M P T E R _ L A K N A T", width / 2, height - 20);
   }
 }
 
