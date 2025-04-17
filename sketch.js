@@ -192,7 +192,7 @@ function handleVisuals() {
   image(kodamImage, 0, 0, width, height);
 
   if (millis() % blinkInterval < blinkInterval / 2) {
-    drawOutlinedText("AZAB PROMPTER", width / 2, height - 20);
+    drawOutlinedText("A Z A B _ P R O M P T E R", width / 2, height - 20);
   }
 }
 
@@ -213,7 +213,7 @@ function drawOutlinedText(txt, x, y) {
 
 function displayDebugText() {
   let headerY = height * 0.08;
-  drawOutlinedText("~GENERATING_AZAB_STAFATORRENTNET~", width / 2, headerY);
+  drawOutlinedText("GENERATING_AZAB_STAFATORRENTNET", width / 2, headerY);
   drawOutlinedText(`fx ${currentEffect}, ~${currentNoise?.getType() || 'none'}~noise ${nf((millis() - noiseTimer) / 1000, 1, 2)}hz`, width / 2, headerY + 20);
   drawOutlinedText(`fx~int ${nf(fxUpdateInterval / 1000, 1, 2)}s, smpl~int ${nf(sampleChangeInterval / 1000, 1, 2)}s`, width / 2, headerY + 40);
 }
